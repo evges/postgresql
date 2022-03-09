@@ -53,9 +53,8 @@ commit;
 
 **посмотреть текущий уровень изоляции: show transaction isolation level**
 
-postgres=# show transaction isolation level;
+show transaction isolation level;
  transaction_isolation
------------------------
  read committed
 (1 row)
 
@@ -75,9 +74,8 @@ postgres=# show transaction isolation level;
 **завершите транзакцию во второй сессии**
 **начать новые но уже repeatable read транзации - set transaction isolation level repeatable read;**
 
-postgres=*# show transaction isolation level;
+show transaction isolation level;
  transaction_isolation
------------------------
  repeatable read
 (1 row)
 
