@@ -19,6 +19,7 @@ eval `ssh-agent -s`
 ssh-add .ssh/id_rsa
 
 **зайти удаленным ssh (первая сессия), не забывайте про ssh-add**
+
 gcloud compute instances list
 ssh evges@34.121.10.16
 
@@ -26,27 +27,32 @@ ssh evges@34.121.10.16
 sudo apt update && sudo apt upgrade -y && sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && sudo apt-get update && sudo apt-get -y install postgresql-14
 
 pg_lsclusters
-**14  main    5432 online postgres /var/lib/postgresql/14/main /var/log/postgresql/postgresql-14-main.log**
+14  main    5432 online postgres /var/lib/postgresql/14/main /var/log/postgresql/postgresql-14-main.log
 
 
 **зайти вторым ssh (вторая сессия)**
+
 ssh evges@34.121.10.16
 
 **запустить везде psql из под пользователя postgres**
+
 sudo -u postgres psql
 
 
 **выключить auto commit**
+
 \echo :AUTOCOMMIT
 \set AUTOCOMMIT OFF
 
 **сделать в первой сессии новую таблицу и наполнить ее данными**
+
 create table persons(id serial, first_name text, second_name text); 
 insert into persons(first_name, second_name) values('ivan', 'ivanov'); 
 insert into persons(first_name, second_name) values('petr', 'petrov'); 
 commit;
 
 **посмотреть текущий уровень изоляции: show transaction isolation level**
+
 postgres=# show transaction isolation level;
  transaction_isolation
 -----------------------
@@ -60,34 +66,35 @@ postgres=# show transaction isolation level;
 
 *Новая запись во второй сесии не видна, т.к. уровень изоляции выбран read_commited, не допускаестся грязное чтение, изменнения будут видны после выполнения коммита*
 
-завершить первую транзакцию - commit;
-сделать select * from persons; во второй сессии
-видите ли вы новую запись и если да то почему?
+**завершить первую транзакцию - commit;**
+**сделать select * from persons; во второй сессии**
+**видите ли вы новую запись и если да то почему?**
 
 *Новая запись видна, т.к. выполнен коммит в первой сессии*
 
-завершите транзакцию во второй сессии
-начать новые но уже repeatable read транзации - set transaction isolation level repeatable read;
+**завершите транзакцию во второй сессии**
+**начать новые но уже repeatable read транзации - set transaction isolation level repeatable read;**
+
 postgres=*# show transaction isolation level;
  transaction_isolation
 -----------------------
  repeatable read
 (1 row)
 
-в первой сессии добавить новую запись insert into persons(first_name, second_name) values('sveta', 'svetova');
-сделать select * from persons; во второй сессии
-видите ли вы новую запись и если да то почему?
+**в первой сессии добавить новую запись insert into persons(first_name, second_name) values('sveta', 'svetova');**
+**сделать select * from persons; во второй сессии**
+**видите ли вы новую запись и если да то почему?**
 
 *Новыя запись не видна*
 
-завершить первую транзакцию - commit;
-сделать select * from persons; во второй сессии
-видите ли вы новую запись и если да то почему?
+**завершить первую транзакцию - commit;**
+**сделать select * from persons; во второй сессии**
+**видите ли вы новую запись и если да то почему?**
 
 *Новая запись не видна*
 
-завершить вторую транзакцию
-сделать select * from persons; во второй сессии
-видите ли вы новую запись и если да то почему?
+**завершить вторую транзакцию**
+**сделать select * from persons; во второй сессии**
+**видите ли вы новую запись и если да то почему?**
 
 *Новая запись видна, т.к. завершили транзакции в первой и во второй сесии, изменения из первой сесии стали видны, в repeatable read видны данные которые были зафиксированы до начала транзакции*
