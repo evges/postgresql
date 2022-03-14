@@ -5,8 +5,11 @@ gcloud compute instances create postgres --project=postgres2022-19860123 --zone=
 **• поставить на нем Docker Engine**
 
 curl -fsSL https://get.docker.com -o get-docker.sh
+
 sudo sh get-docker.sh
+
 sudo gpasswd -a $USER docker 
+
 docker ps -a
 
 **• сделать каталог /var/lib/postgres**
@@ -16,7 +19,9 @@ sudo mkdir /var/lib/postgres
 **• развернуть контейнер с PostgreSQL 14 смонтировав в него /var/lib/postgres**
 
 docker network create pg-net
+
 docker run --name pg-docker --network pg-net -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:14
+
 docker ps -a
 
 ``15cab7f89a22   postgres:14   "docker-entrypoint.s…"   18 seconds ago   Up 16 seconds   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pg-docker``
@@ -24,6 +29,7 @@ docker ps -a
 **• развернуть контейнер с клиентом postgres**
 
 docker run -it -d --network pg-net --name pg-client postgres:14 psql -h pg-docker -U postgres
+
 docker ps -a
 
 ``d87b26fe0dbe   postgres:14   "docker-entrypoint.s…"   4 seconds ago    Up 3 seconds    5432/tcp                                    pg-client``
