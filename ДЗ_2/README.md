@@ -18,6 +18,7 @@ sudo mkdir /var/lib/postgres
 docker network create pg-net
 docker run --name pg-docker --network pg-net -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:14
 docker ps -a
+
 ``15cab7f89a22   postgres:14   "docker-entrypoint.s…"   18 seconds ago   Up 16 seconds   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pg-docker``
 
 **• развернуть контейнер с клиентом postgres**
@@ -26,6 +27,7 @@ docker run -it -d --network pg-net --name pg-client postgres:14 psql -h pg-docke
 docker ps -a
 
 ``d87b26fe0dbe   postgres:14   "docker-entrypoint.s…"   4 seconds ago    Up 3 seconds    5432/tcp                                    pg-client``
+
 ``15cab7f89a22   postgres:14   "docker-entrypoint.s…"   15 minutes ago   Up 15 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pg-docker``
 
 **• подключится из контейнера с клиентом к контейнеру с сервером и сделать таблицу с парой строк**
@@ -45,10 +47,13 @@ psql -p 5432 -U postgres -h 104.198.229.23 -d postgres -W
 
 docker stop 15cab7f89a22
 docker rm 15cab7f89a22
+
 ``d87b26fe0dbe   postgres:14   "docker-entrypoint.s…"   22 minutes ago   Up 22 minutes   5432/tcp   pg-client``
 
 **• создать его заново**
+
 ``34571f405f13   postgres:14   "docker-entrypoint.s…"   2 seconds ago    Up 2 seconds    0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pg-docker``
+
 ``d87b26fe0dbe   postgres:14   "docker-entrypoint.s…"   23 minutes ago   Up 23 minutes   5432/tcp                                    pg-client``
 
 **• подключится снова из контейнера с клиентом к контейнеру с сервером**
