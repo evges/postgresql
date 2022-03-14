@@ -75,8 +75,12 @@ docker exec -it pg-client psql -h pg-docker -U postgres
  select * from persons;
 
  id | first_name | second_name
+
 ----+------------+-------------
+
   1 | ivan       | ivanov
+
   2 | petr       | petrov
+  
 (2 rows)
 
