@@ -30,6 +30,8 @@ docker ps -a
 
 ``15cab7f89a22   postgres:14   "docker-entrypoint.s…"   15 minutes ago   Up 15 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pg-docker``
 
+Клиента демонизировал
+
 **• подключится из контейнера с клиентом к контейнеру с сервером и сделать таблицу с парой строк**
 
 docker exec -it pg-client psql -h pg-docker -U postgres
@@ -50,6 +52,8 @@ docker rm 15cab7f89a22
 
 ``d87b26fe0dbe   postgres:14   "docker-entrypoint.s…"   22 minutes ago   Up 22 minutes   5432/tcp   pg-client``
 
+Остался контейнер с клиентом
+
 **• создать его заново**
 
 ``34571f405f13   postgres:14   "docker-entrypoint.s…"   2 seconds ago    Up 2 seconds    0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pg-docker``
@@ -63,10 +67,10 @@ docker exec -it pg-client psql -h pg-docker -U postgres
 • проверить, что данные остались на месте
 
  select * from persons;
+
  id | first_name | second_name
 ----+------------+-------------
   1 | ivan       | ivanov
   2 | petr       | petrov
 (2 rows)
 
-• оставляйте в ЛК ДЗ комментарии что и как вы делали и как боролись с проблемами
