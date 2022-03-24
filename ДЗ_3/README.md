@@ -19,11 +19,11 @@ sudo apt update && sudo apt upgrade -y && sudo sh -c 'echo "deb http://apt.postg
 
 sudo -u postgres psql
 
-postgres=# select * from test;
- c1
+`postgres=# select * from test;`
+ `c1`
 ----
- 1
-(1 row)
+ `1`
+`(1 row)`
 
 
 **остановите postgres например через sudo -u postgres pg_ctlcluster 14 main stop**
@@ -40,33 +40,52 @@ ok
 
 **проинициализируйте диск согласно инструкции и подмонтировать файловую систему, только не забывайте менять имя диска на актуальное, в вашем случае это скорее всего будет /dev/sdb - https://www.digitalocean.com/community/tutorials/how-to-partition-and-format-storage-devices-in-linux**
 
-sudo parted -l | grep Error
 lsblk
+
 sdb       8:16   0    10G  0 disk
+
 sudo parted /dev/sdb mklabel gpt
+
 sudo parted -a opt /dev/sdb mkpart primary ext4 0% 100%
+
 sudo mkfs.ext4 -L datapartition /dev/sdb1
+
 sudo e2label /dev/sdb1 newlabel
+
 sudo lsblk -o NAME,FSTYPE,LABEL,UUID,MOUNTPOINT
+
 sudo mkdir -p /mnt/data
+
 sudo mount -o defaults /dev/sdb1 /mnt/data
+
 sudo nano /etc/fstab
+
 `LABEL=newlabel /mnt/data ext4 defaults 0 2`
+
 sudo mount -a
+
 df -h -x tmpfs -x devtmpfs
+
 ls -l /mnt/data
+
 `drwx------ 2 root root 16384 Mar 24 04:51 lost+found`
+
 echo "success" | sudo tee /mnt/data/test_file
+
 `success`
 
 **перезагрузите инстанс и убедитесь, что диск остается примонтированным (если не так смотрим в сторону fstab)**
+
 df -h -x tmpfs -x devtmpfs
+
 `/dev/sdb1       9.8G   37M  9.3G   1% /mnt/data`
 
 **сделайте пользователя postgres владельцем /mnt/data - chown -R postgres:postgres /mnt/data/**
+
 sudo chown -R postgres:postgres /mnt/data/
 
 **перенесите содержимое /var/lib/postgres/14 в /mnt/data - mv /var/lib/postgresql/14 /mnt/data**
+
 sudo mv /var/lib/postgresql/14 /mnt/data
 
 **попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 14 main start**
