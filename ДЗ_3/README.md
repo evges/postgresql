@@ -20,9 +20,13 @@ sudo apt update && sudo apt upgrade -y && sudo sh -c 'echo "deb http://apt.postg
 sudo -u postgres psql
 
 `postgres=# select * from test;`
+
  `c1`
+
 ----
+
  `1`
+
 `(1 row)`
 
 
@@ -97,16 +101,19 @@ sudo mv /var/lib/postgresql/14 /mnt/data
 Кластер не был запущен т.к. файлы были перенесены
 
 **задание: найти конфигурационный параметр в файлах раположенных в /etc/postgresql/10/main который надо поменять и поменяйте его**
+
 sudo nano /etc/postgresql/14/main/postgresql.conf
 
 **напишите что и почему поменяли**
 
 #data_directory = '/var/lib/postgresql/14/main'
+
 data_directory = /mnt/data/14/main
 
 Изменил путь к файлам, т.к. они были перенесены
 
 **попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 14 main start**
+
 **напишите получилось или нет и почему**
 
 Кластер запущен
@@ -145,6 +152,7 @@ sdb       8:16   0    10G  0 disk
 sudo e2label /dev/sdb1 newlabel
 
 sudo lsblk -o NAME,FSTYPE,LABEL,UUID,MOUNTPOINT
+
 `sdb`
 `└─sdb1  ext4     newlabel        21c559fc-500a-4d7a-9744-8064dd9227ff`
 
@@ -161,7 +169,9 @@ df -h -x tmpfs -x devtmpfs
 ls -l /mnt/data
 
 `total 20`
+
 `drwxr-xr-x 3 postgres postgres  4096 Mar 24 04:28 14`
+
 `drwx------ 2 postgres postgres 16384 Mar 24 04:51 lost+found`
 
 sudo chown -R postgres:postgres /mnt/data/
@@ -176,10 +186,15 @@ sudo -u postgres pg_ctlcluster 14 main start
 
 sudo -u postgres psql
 
-postgres=# select * from test;
- c1
-----
- 1
-(1 row)
+`postgres=# select * from test;`
+
+ `c1`
+
+`----`
+
+ `1`
+
+`(1 row)`
+
 
 По итогу примониторовался существующий диск, данные таблицы созданной на первом инстансе видны.
