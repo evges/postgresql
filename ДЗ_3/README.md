@@ -124,7 +124,6 @@ sudo -u postgres psql
 
 `postgres=# select * from test;`
  `c1`
-`----`
  `1`
 `(1 row)`
 
@@ -187,13 +186,8 @@ sudo -u postgres pg_ctlcluster 14 main start
 sudo -u postgres psql
 
 `postgres=# select * from test;`
-
  `c1`
-
-`----`
-
  `1`
-
 `(1 row)`
 
 
