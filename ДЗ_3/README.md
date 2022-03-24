@@ -20,13 +20,8 @@ sudo apt update && sudo apt upgrade -y && sudo sh -c 'echo "deb http://apt.postg
 sudo -u postgres psql
 
 `postgres=# select * from test;`
-
  `c1`
-
-----
-
  `1`
-
 `(1 row)`
 
 
