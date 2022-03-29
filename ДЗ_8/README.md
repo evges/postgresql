@@ -71,18 +71,31 @@ ALTER SYSTEM SET autovacuum_naptime TO 15;
 sudo service postgresql restart
 
 progress: 2820.0 s, 470.2 tps, lat 17.013 ms stddev 26.225
+
 progress: 2880.0 s, 471.6 tps, lat 16.954 ms stddev 25.924
+
 progress: 2940.0 s, 483.6 tps, lat 16.537 ms stddev 25.264
+
 progress: 3000.0 s, 464.2 tps, lat 17.233 ms stddev 25.675
+
 progress: 3060.0 s, 476.2 tps, lat 16.794 ms stddev 25.740
+
 progress: 3120.0 s, 483.0 tps, lat 16.561 ms stddev 26.278
+
 progress: 3180.0 s, 483.2 tps, lat 16.557 ms stddev 25.387
+
 progress: 3240.0 s, 477.7 tps, lat 16.743 ms stddev 26.002
+
 progress: 3300.0 s, 479.9 tps, lat 16.668 ms stddev 26.075
+
 progress: 3360.0 s, 469.9 tps, lat 17.026 ms stddev 25.850
+
 progress: 3420.0 s, 480.6 tps, lat 16.642 ms stddev 26.031
+
 progress: 3480.0 s, 480.0 tps, lat 16.666 ms stddev 26.133
+
 progress: 3540.0 s, 476.4 tps, lat 16.789 ms stddev 25.699
+
 progress: 3600.0 s, 470.4 tps, lat 16.994 ms stddev 26.341
 
 Значение tps более-менее выравнялось 
