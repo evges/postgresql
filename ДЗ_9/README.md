@@ -125,7 +125,6 @@ insert into sev values (1);
 select * from sev;
 
  id
-----
   1
   2
   3
@@ -149,14 +148,13 @@ ERROR:  invalid page in block 0 of relation base/13726/16384
 
 SET ignore_checksum_failure = on; 
 
-`ignore_checksum_failure` позволяет процитать таблицу, с риском получить искажение
+`ignore_checksum_failure` позволяет прочитать таблицу, с риском получить искажение
 
 select * from sev;
 
 WARNING:  page verification failed, calculated checksum 9010 but expected 79
 
 id
-----
   1
   2
   3
