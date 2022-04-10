@@ -160,18 +160,16 @@ sudo -u postgres psql
 ```sql
 BEGIN;
 UPDATE test set count = 1111 where id = 1; --SS1
-```
 UPDATE test set count = 33333333 where id = 3; --SS3
 
 BEGIN;
 UPDATE test set count = 2222 where id = 2; --SS2
-
 UPDATE test set count = 11111111 where id = 1; --SS1
 
 BEGIN;
 UPDATE test set count = 3333 where id = 3; --SS3
-
 UPDATE test set count = 22222222 where id = 2; --SS2
+```
 
 `ERROR:  deadlock detected`
 `DETAIL:  Process 46378 waits for ShareLock on transaction 749; blocked by process 46376.`
