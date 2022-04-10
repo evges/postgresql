@@ -154,8 +154,9 @@ SELECT * FROM locks_v WHERE pid = 16468; --746
 ```bash
 sudo -u postgres psql
 ```
-
+```postgre
 \c locks
+```
 
 ```sql
 BEGIN;
