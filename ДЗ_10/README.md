@@ -21,11 +21,8 @@ sudo -u postgres psql
 SHOW log_lock_waits;
 
 ALTER SYSTEM SET log_lock_waits = on;
-
 SHOW deadlock_timeout;
-
 ALTER SYSTEM SET deadlock_timeout = 200s;
-
 select pg_reload_conf();
 
 create database locks;
@@ -40,27 +37,20 @@ CREATE TABLE test(
 INSERT INTO test VALUES (1,100), (2,200), (3,300);
 
 --SS1
-
 \set AUTOCOMMIT OFF
-
 UPDATE test set count = 1111 where id = 1;
-
 --
 
 --SS2
-
 \set AUTOCOMMIT OFF
-
 UPDATE test set count = 7777 where id = 1;
-
 --
 
 tail -n 10 /var/log/postgresql/postgresql-14-main.log
-
 `postgres@locks LOG:  process 16070 still waiting for ShareLock on transaction 736 after 200.235 ms`
 
---SS1 COMMIT;
-
+--SS1 
+COMMIT;
  `postgres@locks LOG:  process 16070 acquired ShareLock on transaction 736 after 202391.253 ms` --освободил
 ```
 
@@ -113,11 +103,8 @@ AND (locktype != 'relation' OR relation = 'test'::regclass);
 SELECT * FROM locks_v WHERE pid = 15947; --744
 
  pid  |   locktype    | lockid |       mode       | granted
-
 -------+---------------+--------+------------------+---------
-
  15947 | relation      | test   | RowExclusiveLock | t         --блокировка отношений, устанавливается на изменяемые строки
-
  15947 | transactionid | 744    | ExclusiveLock    | t         --удерживается транзация для себя 
 
 -----------------SS2
@@ -125,15 +112,10 @@ SELECT * FROM locks_v WHERE pid = 15947; --744
 SELECT * FROM locks_v WHERE pid = 16070; --745
 
   pid  |   locktype    | lockid |       mode       | granted
-
 -------+---------------+--------+------------------+---------
-
  16070 | relation      | test   | RowExclusiveLock | t          --блокировка отношений, устанавливается на изменяемые строки
-
  16070 | tuple         | test:3 | ExclusiveLock    | t          --блокировка версии строки
-
  16070 | transactionid | 744    | ShareLock        | f          --ожидание получения блокировки ShareLock для SS1
-
  16070 | transactionid | 745    | ExclusiveLock    | t          --удерживается транзакция для себя
 
 
@@ -142,13 +124,9 @@ SELECT * FROM locks_v WHERE pid = 16070; --745
 SELECT * FROM locks_v WHERE pid = 16468; --746
 
   pid  |   locktype    | lockid |       mode       | granted
-
 -------+---------------+--------+------------------+---------
-
  16468 | relation      | test   | RowExclusiveLock | t          --блокировка отношений, устанавливается на изменяемые строки
-
  16468 | transactionid | 746    | ExclusiveLock    | t          --удерживается транзакция для себя
-
  16468 | tuple         | test:3 | ExclusiveLock    | f          --ожидание получения блокировки на изменяемые строки
 ```
 
@@ -199,6 +177,7 @@ locks=# select * from test;
 
 tail -n 10 /var/log/postgresql/postgresql-14-main.log
 
+```bash
 2022-04-10 09:41:08.169 UTC [46378] postgres@locks LOG:  process 46378 detected deadlock while waiting for ShareLock on transaction 752 after 200.156 ms
 2022-04-10 09:41:08.169 UTC [46378] postgres@locks DETAIL:  Process holding the lock: 46376. Wait queue: .
 2022-04-10 09:41:08.169 UTC [46378] postgres@locks CONTEXT:  while updating tuple (0,15) in relation "test"
@@ -210,6 +189,7 @@ tail -n 10 /var/log/postgresql/postgresql-14-main.log
         Process 46378: UPDATE test set count = 22222222 where id = 2;
         Process 46376: UPDATE test set count = 11111111 where id = 1;
         Process 46375: UPDATE test set count = 33333333 where id = 3;
+```
 
 
 # Могут ли две транзакции, выполняющие единственную команду UPDATE одной и той же таблицы (без where), заблокировать друг друга?
