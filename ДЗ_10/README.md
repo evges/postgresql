@@ -157,9 +157,10 @@ sudo -u postgres psql
 
 \c locks
 
+```bash
 BEGIN;
 UPDATE test set count = 1111 where id = 1; --SS1
-
+```
 UPDATE test set count = 33333333 where id = 3; --SS3
 
 BEGIN;
