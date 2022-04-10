@@ -17,6 +17,7 @@ sudo apt update && sudo apt upgrade -y && sudo sh -c 'echo "deb http://apt.postg
 sudo -u postgres psql
 ```
 
+```sql
 SHOW log_lock_waits;
 
 ALTER SYSTEM SET log_lock_waits = on;
@@ -61,9 +62,11 @@ tail -n 10 /var/log/postgresql/postgresql-14-main.log
 --SS1 COMMIT;
 
  `postgres@locks LOG:  process 16070 acquired ShareLock on transaction 736 after 202391.253 ms` --освободил
+```
 
 # Смоделируйте ситуацию обновления одной и той же строки тремя командами UPDATE в разных сеансах. Изучите возникшие блокировки в представлении pg_locks и убедитесь, что все они понятны. Пришлите список блокировок и объясните, что значит каждая.
 
+```sql
 --SS1
 BEGIN;
 UPDATE test set count = 1111 where id = 3;
@@ -147,7 +150,7 @@ SELECT * FROM locks_v WHERE pid = 16468; --746
  16468 | transactionid | 746    | ExclusiveLock    | t          --удерживается транзакция для себя
 
  16468 | tuple         | test:3 | ExclusiveLock    | f          --ожидание получения блокировки на изменяемые строки
-
+```
 
 # Воспроизведите взаимоблокировку трех транзакций. Можно ли разобраться в ситуации постфактум, изучая журнал сообщений?
 
@@ -180,7 +183,7 @@ UPDATE test set count = 22222222 where id = 2; --SS2
 `HINT:  See server log for query details.`
 `CONTEXT:  while updating tuple (0,15) in relation "test"`
 
-
+```sql
 COMMIT; --SS1, SS2, SS3 
 
 locks=# select * from test;
@@ -190,6 +193,7 @@ locks=# select * from test;
   3 | 33333333
   1 | 11111111
 (3 rows)
+```
 
 Разобраться d ситуации можно изучив журнал:
 
