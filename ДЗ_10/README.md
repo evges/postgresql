@@ -151,10 +151,64 @@ SELECT * FROM locks_v WHERE pid = 16468; --746
 
 # Воспроизведите взаимоблокировку трех транзакций. Можно ли разобраться в ситуации постфактум, изучая журнал сообщений?
 
+```bash
+sudo -u postgres psql
+```
+
+\c locks
+
+BEGIN;
+UPDATE test set count = 1111 where id = 1; --SS1
+
+UPDATE test set count = 33333333 where id = 3; --SS3
+
+BEGIN;
+UPDATE test set count = 2222 where id = 2; --SS2
+
+UPDATE test set count = 11111111 where id = 1; --SS1
+
+BEGIN;
+UPDATE test set count = 3333 where id = 3; --SS3
+
+UPDATE test set count = 22222222 where id = 2; --SS2
+
+`ERROR:  deadlock detected`
+`DETAIL:  Process 46378 waits for ShareLock on transaction 749; blocked by process 46376.`
+`Process 46376 waits for ShareLock on transaction 748; blocked by process 46375.`
+`Process 46375 waits for ShareLock on transaction 750; blocked by process 46378.`
+`HINT:  See server log for query details.`
+`CONTEXT:  while updating tuple (0,15) in relation "test"`
 
 
+COMMIT; --SS1, SS2, SS3 
+
+locks=# select * from test;
+ id |  count
+----+----------
+  2 |     2222
+  3 | 33333333
+  1 | 11111111
+(3 rows)
+
+Разобраться d ситуации можно изучив журнал:
+
+tail -n 10 /var/log/postgresql/postgresql-14-main.log
+
+2022-04-10 09:41:08.169 UTC [46378] postgres@locks LOG:  process 46378 detected deadlock while waiting for ShareLock on transaction 752 after 200.156 ms
+2022-04-10 09:41:08.169 UTC [46378] postgres@locks DETAIL:  Process holding the lock: 46376. Wait queue: .
+2022-04-10 09:41:08.169 UTC [46378] postgres@locks CONTEXT:  while updating tuple (0,15) in relation "test"
+2022-04-10 09:41:08.169 UTC [46378] postgres@locks STATEMENT:  UPDATE test set count = 22222222 where id = 2;
+2022-04-10 09:41:08.169 UTC [46378] postgres@locks ERROR:  deadlock detected
+2022-04-10 09:41:08.169 UTC [46378] postgres@locks DETAIL:  Process 46378 waits for ShareLock on transaction 752; blocked by process 46376.
+        Process 46376 waits for ShareLock on transaction 751; blocked by process 46375.
+        Process 46375 waits for ShareLock on transaction 753; blocked by process 46378.
+        Process 46378: UPDATE test set count = 22222222 where id = 2;
+        Process 46376: UPDATE test set count = 11111111 where id = 1;
+        Process 46375: UPDATE test set count = 33333333 where id = 3;
 
 
 # Могут ли две транзакции, выполняющие единственную команду UPDATE одной и той же таблицы (без where), заблокировать друг друга?
+
+Транзакции могут заблокировать друг друга, если обращение к записи таблицы будет через разные планы запроса.
 
 Попробуйте воспроизвести такую ситуацию.
