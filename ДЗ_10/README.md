@@ -153,14 +153,14 @@ BEGIN;
 UPDATE test set count = 3333 where id = 3; --SS3
 UPDATE test set count = 22222222 where id = 2; --SS2
 ```
-
-`ERROR:  deadlock detected`
-`DETAIL:  Process 46378 waits for ShareLock on transaction 749; blocked by process 46376.`
-`Process 46376 waits for ShareLock on transaction 748; blocked by process 46375.`
-`Process 46375 waits for ShareLock on transaction 750; blocked by process 46378.`
-`HINT:  See server log for query details.`
-`CONTEXT:  while updating tuple (0,15) in relation "test"`
-
+```bash
+ERROR:  deadlock detected
+DETAIL:  Process 46378 waits for ShareLock on transaction 749; blocked by process 46376.
+Process 46376 waits for ShareLock on transaction 748; blocked by process 46375.
+Process 46375 waits for ShareLock on transaction 750; blocked by process 46378.
+HINT:  See server log for query details.
+CONTEXT:  while updating tuple (0,15) in relation "test"
+```
 ```sql
 COMMIT; --SS1, SS2, SS3 
 
