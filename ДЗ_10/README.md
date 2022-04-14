@@ -173,7 +173,7 @@ locks=# select * from test;
 (3 rows)
 ```
 
-Разобраться d ситуации можно изучив журнал:
+Разобраться в ситуации можно изучив журнал:
 
 tail -n 10 /var/log/postgresql/postgresql-14-main.log
 
