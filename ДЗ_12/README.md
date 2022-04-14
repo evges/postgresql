@@ -21,16 +21,24 @@ sudo apt update && sudo apt upgrade -y && sudo sh -c 'echo "deb http://apt.postg
 sudo -u postgres psql
 ```
 
+```SQL
+
+--Посмотрим в pg_settings какие пареметры установлены
+select * from pg_settings where name = 'shared_buffers' \gx
+select * from pg_settings where name = 'wal_buffers' \gx
+select * from pg_settings where name = 'work_mem' \gx
+select * from pg_settings where name = 'maintenance_work_mem' \gx
+select * from pg_settings where name = 'effective_cache_size' \gx
+select * from pg_settings where name = 'autovacuum' \gx
 select * from pg_settings where name = 'synchronous_commit' \gx
 
 
-
-DB Version: 14
+/*DB Version: 14
 OS Type: linux
 DB Type: web
 Total Memory (RAM): 4 GB
 CPUs num: 2
-Data Storage: ssd
+Data Storage: ssd*/
 
 
 ALTER SYSTEM SET shared_buffers = '1GB';
@@ -42,19 +50,7 @@ ALTER SYSTEM SET autovacuum = 'off';
 ALTER SYSTEM SET synchronous_commit = 'off';
 
 select pg_reload_conf();
-
- 
-Max_connections
-• Shared_buffers
-• Wal_buffers
-• Work_mem
-• Maintenance_work_mem
-• Effective_cache_size
-• Autovacuum
-• Syncronous_commit
-
-
-
+```
 
 # нагрузить кластер через утилиту
 https://github.com/Percona-Lab/sysbench-tpcc (требует установки
@@ -88,26 +84,35 @@ tps = 936.426681 (without initial connection time)
 Изменены параметры
 
 ```sql
---пареметры выставлены согласно  предложенных pgtune
+--параметры выставлены согласно предложенных pgtune
+    
+    --для кэширования данных
     select * from pg_settings where name = 'shared_buffers' \gx
     setting         | 16384
 
+    --Объём разделяемой памяти
     select * from pg_settings where name = 'wal_buffers' \gx
     setting         | 512
 
+    --Используется для сортировок, построения hash таблиц
     select * from pg_settings where name = 'work_mem' \gx
     setting         | 5242
 
+    --Определяет максимальное количество ОП для операций типа VACUUM, CREATE INDEX, CREATE FOREIGN KEY.
     select * from pg_settings where name = 'maintenance_work_mem' \gx
     setting         | 262144
 
+    --Служит подсказкой для планировщика, сколько ОП у него в запасе
     select * from pg_settings where name = 'effective_cache_size' \gx
     setting         | 393216
 --
+
 --отключил автоочистку
 select * from pg_settings where name = 'autovacuum' \gx
 setting         | off 
+
 -- отключил сбрасывание wal файлов
 select * from pg_settings where name = 'synchronous_commit' \gx
 setting         | off
+
 ```
