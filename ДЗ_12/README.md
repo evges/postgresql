@@ -58,12 +58,13 @@ https://github.com/akopytov/sysbench) или через утилиту pgbench (
 
 Выполнил нагрузку через утилиту pgbench
 
+```bash
 sudo su postgres
 
 pgbench -i postgres
 
 pgbench -c 50 -j 2 -P 60 -T 600 -U postgres postgres
-
+```
 
 # написать какого значения tps удалось достичь, показать какие параметры в какие значения устанавливали и почему
 
