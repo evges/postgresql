@@ -161,7 +161,6 @@ CREATE SUBSCRIPTION test_sub2
 CONNECTION 'host=10.128.0.17 port=5432 user=postgres password=otus123 dbname=otus' 
 PUBLICATION test_pub WITH (copy_data = true);
 
-
 select * from test;
 select * from test2;
 ```
